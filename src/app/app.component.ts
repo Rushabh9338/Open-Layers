@@ -1,5 +1,5 @@
 import { Component, OnInit, VERSION } from '@angular/core';
-import Draw from 'ol/interaction/Draw.js';
+import Draw, { createBox, createRegularPolygon } from 'ol/interaction/Draw.js';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
@@ -7,6 +7,7 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import Feature from 'ol/Feature';
 import { Fill, Stroke, Style } from 'ol/style';
 import CircleStyle from 'ol/style/Circle';
+import { Polygon } from 'ol/geom';
 
 @Component({
   selector: 'my-app',
@@ -19,6 +20,8 @@ export class AppComponent implements OnInit {
   source;
   drawLayer;
   vector;
+
+  constructor() {}
 
   ngOnInit() {
     const raster = new TileLayer({
@@ -41,53 +44,113 @@ export class AppComponent implements OnInit {
     });
   }
 
-  test(value: any) {
-    if (this.drawLayer) this.Map.removeInteraction(this.drawLayer);
-    if (value === 'clear') {
-      this.vector.getSource()?.clear();
-    } else {
-      this.drawLayer = new Draw({
-        source: this.source,
-        type: value,
-        style: new Style({
-          fill: new Fill({
-            color: 'blue',
-          }),
-          stroke: new Stroke({
-            color: 'yellow',
-            width: 2,
-          }),
-        }),
-      });
-      this.vector.setStyle(
-        new Style({
-          fill: new Fill({
-            color: this.makePattern(),
-          }),
-          stroke: new Stroke({
-            color: 'green',
-            width: 5,
+  // addInteraction() {
+  //   const typeSelect = <HTMLInputElement>document.getElementById('type');
+  //   let valueParameter = typeSelect.value;
+  //   if (valueParameter !== 'None') {
+  //     let geometryFunction;
+  //     if (valueParameter === 'Square') {
+  //       valueParameter = 'Circle';
+  //       geometryFunction = createRegularPolygon(4);
+  //     } else if (valueParameter === 'Box') {
+  //       valueParameter = 'Circle';
+  //       geometryFunction = createBox();
+  //     } else if (valueParameter === 'Star') {
+  //       valueParameter = 'Circle';
+  //       geometryFunction = (coordinates, geometry) => {
+  //         const center = coordinates[0];
+  //         const last = coordinates[coordinates.length - 1];
+  //         const dx = center[0] - last[0];
+  //         const dy = center[1] - last[1];
+  //         const radius = Math.sqrt(dx * dx + dy * dy);
+  //         console.log(radius);
+  //         const rotation = Math.atan2(dy, dx);
+  //         const newCoordinates = [];
+  //         const numPoints = 12;
+  //         for (let i = 0; i < numPoints; ++i) {
+  //           const angle = rotation + (i * 2 * Math.PI) / numPoints;
+  //           const fraction = i % 2 === 0 ? 1 : 0.5;
+  //           const offsetX = radius * fraction * Math.cos(angle);
+  //           const offsetY = radius * fraction * Math.sin(angle);
+  //           newCoordinates.push([center[0] + offsetX, center[1] + offsetY]);
+  //         }
+  //         newCoordinates.push(newCoordinates[0].slice());
+  //         if (!geometry) {
+  //           geometry = new Polygon([newCoordinates]);
+  //         } else {
+  //           geometry.setCoordinates([newCoordinates]);
+  //         }
+  //         return geometry;
+  //       };
+  //     }
+  //     this.drawLayer = new Draw({
+  //       source: this.source,
+  //       type: 'Circle',
+  //       geometryFunction: geometryFunction,
+  //     });
+  //     this.Map.addInteraction(this.drawLayer);
+  //   }
+    /**
+     * Handle change event.
+     */
+    // typeSelect.onchange = () => {
+    //   this.Map.removeInteraction(this.drawLayer);
+    //   this.addInteraction();
+    // };
 
-            // Solid Line
-            // lineDash: [10, 0],
-
-            // Dashed Line
-            // lineDash: [10, 10],
-
-            // Dash-Dotted Line
-            // lineDash: [10, 10, 1, 10],
-
-            // Dash-Dot-Dot
-            // lineDash: [10, 10, 1, 10, 1, 10],
-
-            // Dot
-            // lineDash: [1, 10],
-          }),
-        })
-      );
-      this.Map.addInteraction(this.drawLayer);
-    }
+    // document.getElementById('undo').addEventListener('click', () => {
+    //   this.drawLayer.removeLastPoint();
+    // });
+    // this.addInteraction();
   }
+
+  // test(value: any) {
+  //   if (this.drawLayer) this.Map.removeInteraction(this.drawLayer);
+  //   if (value === 'clear') {
+  //     this.vector.getSource()?.clear();
+  //   } else {
+  //     this.drawLayer = new Draw({
+  //       source: this.source,
+  //       type: value,
+  //       style: new Style({
+  //         fill: new Fill({
+  //           color: 'blue',
+  //         }),
+  //         stroke: new Stroke({
+  //           color: 'yellow',
+  //           width: 2,
+  //         }),
+  //       }),
+  //     });
+  //     this.vector.setStyle(
+  //       new Style({
+  //         fill: new Fill({
+  //           color: this.makePattern(),
+  //         }),
+  //         stroke: new Stroke({
+  //           color: 'green',
+  //           width: 5,
+
+  //           // Solid Line
+  //           // lineDash: [10, 0],
+
+  //           // Dashed Line
+  //           // lineDash: [10, 10],
+
+  //           // Dash-Dotted Line
+  //           // lineDash: [10, 10, 1, 10],
+
+  //           // Dash-Dot-Dot
+  //           // lineDash: [10, 10, 1, 10, 1, 10],
+
+  //           // Dot
+  //           // lineDash: [1, 10],
+  //         }),
+  //       })
+  //     );
+  //     this.Map.addInteraction(this.drawLayer);
+  //   }
+  // }
 
   // makePattern = () => {
   //   var cnv = document.createElement('canvas');
@@ -147,6 +210,26 @@ export class AppComponent implements OnInit {
   // drawingContext.moveTo(0,i*thickness + thickness/2);
   // drawingContext.lineTo(300,i*thickness + thickness/2);
   // drawingContext.stroke();
+  // }
+  //
+
+  // Cross Pattern
+  // makePattern() {
+  //   var canvas = document.createElement('canvas');
+  //   var ctx = canvas.getContext('2d');
+  //   for (let i = 10; i < 200; i += 20) {
+  //     ctx.moveTo(0, i);
+  //     ctx.lineTo(canvas.width, i);
+  //     ctx.stroke();
+  //   }
+  //   for (let i = 10; i < 400; i += 20) {
+  //     ctx.moveTo(i, 0);
+  //     ctx.lineTo(i, canvas.width / 2);
+  //     // ctx.setTransform(1, 0.2, 0.8, 1, 0, 0);
+  //     ctx.stroke();
+  //   }
+
+  //   return ctx.createPattern(canvas, 'repeat');
   // }
 
   makePattern() {
