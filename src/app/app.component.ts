@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   source;
   drawLayer;
   vector;
+  valueParameter;
 
   constructor() {}
 
@@ -42,27 +43,133 @@ export class AppComponent implements OnInit {
         zoom: 4,
       }),
     });
+
+    // Specific radius for Drawing Circle
+    //   const circle = new Circle([10, 10], 1000);
+    //   // const test = circle.geLength();
+    //   const feature = new Feature(circle);
+    //   this.vectorLayer = new VectorLayer({
+    //     source: new VectorSource({
+    //       features: [feature],
+    //     }),
+    //   });
+
+    //   this.map = new Map({
+    //     layers: [this.vectorLayer],
+    //     target: 'map',
+    //     view: new View({
+    //       center: [10, 10],
+    //       zoom: 8,
+    //     }),
+    //   });
+    //   this.vectorLayer.setStyle(function (feature) {
+    //     return new Style({
+    //       stroke: new Stroke({
+    //         color: 'red',
+    //         width: 2,
+    //       }),
+    //       fill: new Fill({
+    //         color: 'rgba(255, 0, 0, 0.1)',
+    //       }),
+    //     });
+    //   });
+    // }
   }
+
+  // addInteraction(){
+
+  //   options = {
+  //     div: "map",
+  //     zoom: 2,
+  //     center: [0, 0],
+  //     layers: [
+  //       new OpenLayers.Layer.OSM()
+  //     ]
+  //   };
+  //   map = new OpenLayers.Map(options);
+  //   vector = new OpenLayers.Layer.Vector();
+  //   map.addLayer(vector);
+
+  //   var point1 = new OpenLayers.Geometry.Point(0, 0);
+  //   var point2 = new OpenLayers.Geometry.Point(1000000, 1000000);
+  //   var point3 = new OpenLayers.Geometry.Point(2000000, 2000000);
+  //   var radius = document.getElementById("amount").value;
+  //   var mycircle = OpenLayers.Geometry.Polygon.createRegularPolygon(point2, radius, 40, 0);
+  //   var featurecircle = new OpenLayers.Feature.Vector(mycircle);
+
+  //   // var selected_polygon_style = {
+  //   //     strokeWidth: 5,
+  //   //     strokeColor: '#ff0000'
+  //   //     // add more styling key/value pairs as your need
+  //   // };
+
+  //   // featurecircle.style = selected_polygon_style;
+
+  //   marker1 = new OpenLayers.Feature.Vector(point1, null, {
+  //     externalGraphic: "marker.png",
+  //     graphicWidth: 32,
+  //     graphicHeight: 32,
+  //     fillOpacity: 1
+  //   });
+  //   marker1.style = {
+  //     display: 'none'
+  //   };
+
+  //   marker2 = new OpenLayers.Feature.Vector(point2, null, {
+  //     externalGraphic: "marker.png",
+  //     graphicWidth: 32,
+  //     graphicHeight: 32,
+  //     fillOpacity: 1
+  //   });
+
+  //   marker3 = new OpenLayers.Feature.Vector(point3, null, {
+  //     externalGraphic: "marker.png",
+  //     graphicWidth: 32,
+  //     graphicHeight: 32,
+  //     fillOpacity: 1
+  //   });
+  //   vector.addFeatures([marker1, marker2, marker3, featurecircle]);
+
+  //   var slider = document.getElementById("slider-range-max");
+  //   slider.addEventListener("input", function(event) {
+  //     var amount = document.getElementById("amount");
+  //     amount.value = event.target.value;
+  //     radius = amount.value;
+
+  //     vector.removeFeatures([featurecircle]);
+  //     var mycircle = OpenLayers.Geometry.Polygon.createRegularPolygon(
+  //       point2,
+  //       radius,
+  //       40,
+  //       0
+  //     );
+
+  //     featurecircle = new OpenLayers.Feature.Vector(mycircle);
+  //     vector.addFeatures([featurecircle]);
+
+  //     console.log(radius);
+  //   });
+  // }
 
   // addInteraction() {
   //   const typeSelect = <HTMLInputElement>document.getElementById('type');
-  //   let valueParameter = typeSelect.value;
-  //   if (valueParameter !== 'None') {
+  //   this.valueParameter = typeSelect.value;
+  //   if (this.valueParameter !== 'None') {
   //     let geometryFunction;
-  //     if (valueParameter === 'Square') {
-  //       valueParameter = 'Circle';
+  //     if (this.valueParameter === 'Square') {
+  //       this.valueParameter = 'Circle';
   //       geometryFunction = createRegularPolygon(4);
-  //     } else if (valueParameter === 'Box') {
-  //       valueParameter = 'Circle';
+  //     } else if (this.valueParameter === 'Box') {
+  //       this.valueParameter = 'Circle';
   //       geometryFunction = createBox();
-  //     } else if (valueParameter === 'Star') {
-  //       valueParameter = 'Circle';
+  //     } else if (this.valueParameter === 'Star') {
+  //       this.valueParameter = 'Circle';
   //       geometryFunction = (coordinates, geometry) => {
   //         const center = coordinates[0];
   //         const last = coordinates[coordinates.length - 1];
   //         const dx = center[0] - last[0];
   //         const dy = center[1] - last[1];
-  //         const radius = Math.sqrt(dx * dx + dy * dy);
+  //         const radius = 200;
   //         console.log(radius);
   //         const rotation = Math.atan2(dy, dx);
   //         const newCoordinates = [];
@@ -85,72 +192,73 @@ export class AppComponent implements OnInit {
   //     }
   //     this.drawLayer = new Draw({
   //       source: this.source,
-  //       type: 'Circle',
+  //       type: this.valueParameter,
   //       geometryFunction: geometryFunction,
   //     });
   //     this.Map.addInteraction(this.drawLayer);
   //   }
-    /**
-     * Handle change event.
-     */
-    // typeSelect.onchange = () => {
-    //   this.Map.removeInteraction(this.drawLayer);
-    //   this.addInteraction();
-    // };
 
-    // document.getElementById('undo').addEventListener('click', () => {
-    //   this.drawLayer.removeLastPoint();
-    // });
-    // this.addInteraction();
-  }
+  /**
+   * Handle change event.
+   */
+  // typeSelect.onchange = () => {
+  //   this.Map.removeInteraction(this.drawLayer);
+  //   this.addInteraction();
+  // };
 
-  // test(value: any) {
-  //   if (this.drawLayer) this.Map.removeInteraction(this.drawLayer);
-  //   if (value === 'clear') {
-  //     this.vector.getSource()?.clear();
-  //   } else {
-  //     this.drawLayer = new Draw({
-  //       source: this.source,
-  //       type: value,
-  //       style: new Style({
-  //         fill: new Fill({
-  //           color: 'blue',
-  //         }),
-  //         stroke: new Stroke({
-  //           color: 'yellow',
-  //           width: 2,
-  //         }),
-  //       }),
-  //     });
-  //     this.vector.setStyle(
-  //       new Style({
-  //         fill: new Fill({
-  //           color: this.makePattern(),
-  //         }),
-  //         stroke: new Stroke({
-  //           color: 'green',
-  //           width: 5,
-
-  //           // Solid Line
-  //           // lineDash: [10, 0],
-
-  //           // Dashed Line
-  //           // lineDash: [10, 10],
-
-  //           // Dash-Dotted Line
-  //           // lineDash: [10, 10, 1, 10],
-
-  //           // Dash-Dot-Dot
-  //           // lineDash: [10, 10, 1, 10, 1, 10],
-
-  //           // Dot
-  //           // lineDash: [1, 10],
-  //         }),
-  //       })
-  //     );
-  //     this.Map.addInteraction(this.drawLayer);
-  //   }
+  // document.getElementById('undo').addEventListener('click', () => {
+  //   this.drawLayer.removeLastPoint();
+  // });
+  // this.addInteraction();
   // }
+
+  test(value: any) {
+    if (this.drawLayer) this.Map.removeInteraction(this.drawLayer);
+    if (value === 'clear') {
+      this.vector.getSource()?.clear();
+    } else {
+      this.drawLayer = new Draw({
+        source: this.source,
+        type: value,
+        style: new Style({
+          fill: new Fill({
+            color: 'blue',
+          }),
+          stroke: new Stroke({
+            color: 'yellow',
+            width: 2,
+          }),
+        }),
+      });
+      this.vector.setStyle(
+        new Style({
+          fill: new Fill({
+            color: this.makePattern(),
+          }),
+          stroke: new Stroke({
+            color: 'green',
+            width: 5,
+
+            // Solid Line
+            // lineDash: [10, 0],
+
+            // Dashed Line
+            // lineDash: [10, 10],
+
+            // Dash-Dotted Line
+            // lineDash: [10, 10, 1, 10],
+
+            // Dash-Dot-Dot
+            // lineDash: [10, 10, 1, 10, 1, 10],
+
+            // Dot
+            // lineDash: [1, 10],
+          }),
+        })
+      );
+      this.Map.addInteraction(this.drawLayer);
+    }
+  }
 
   // makePattern = () => {
   //   var cnv = document.createElement('canvas');
@@ -250,3 +358,4 @@ export class AppComponent implements OnInit {
     return ctx.createPattern(canvas, 'repeat');
   }
 }
+// }
